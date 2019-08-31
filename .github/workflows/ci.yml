@@ -51,6 +51,7 @@ jobs:
         cmake --build . --config ${{matrix.build_type}} --target install
         cd ../..
 
+        export PATH=$PATH:${GITHUB_WORKSPACE}/install/bin:${GITHUB_WORKSPACE}/install/lib
 
     - name: Configure
       shell: bash
