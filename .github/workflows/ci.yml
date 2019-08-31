@@ -57,7 +57,7 @@ jobs:
       run: |
         mkdir -p build
         cd build    
-        cmake -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} ..
+        cmake -DCMAKE_PREFIX_PATH=${GITHUB_WORKSPACE}/install -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} ..
         
     - name: Build
       shell: bash
@@ -69,6 +69,6 @@ jobs:
       shell: bash
       run: |
         cd build
-        cmake -DBUILD_TESTING:BOOL=ON .
+        cmake -DCMAKE_PREFIX_PATH=${GITHUB_WORKSPACE}/install -DBUILD_TESTING:BOOL=ON .
         cmake --build . --config ${{ matrix.build_type }}
         ctest --output-on-failure -C ${{ matrix.build_type }} .
