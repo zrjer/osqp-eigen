@@ -24,7 +24,7 @@ jobs:
         brew install ccache
         export PATH="/usr/local/opt/ccache/libexec:$PATH"
         brew install eigen pkg-config
-        export DYLD_LIBRARY_PATH=${DYLD_LIBRARY_PATH}:${GITHUB_WORKSPACE}/install/lib
+        export DYLD_LIBRARY_PATH=${GITHUB_WORKSPACE}/install/lib
         echo ${DYLD_LIBRARY_PATH}
         
     - name: Dependencies [Ubuntu]
