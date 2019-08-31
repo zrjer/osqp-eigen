@@ -1,4 +1,4 @@
-name: name: C++ CI Workflow
+name: C++ CI Workflow
 
 on: [push, pull_request]
 
@@ -29,7 +29,7 @@ jobs:
       if: matrix.os == 'ubuntu-latest'
       run: |
         export DEBIAN_FRONTEND=noninteractive
-        apt-get install -y clang wget unzip build-essential cmake libeigen3-dev git 
+        sudo apt-get install -y clang wget unzip build-essential cmake libeigen3-dev git 
         
     - name: Source-based Dependencies 
       shell: bash
@@ -72,5 +72,3 @@ jobs:
         cmake -DBUILD_TESTING:BOOL=ON .
         cmake --build . --config ${{ matrix.build_type }}
         ctest --output-on-failure -C ${{ matrix.build_type }} .
-
-
