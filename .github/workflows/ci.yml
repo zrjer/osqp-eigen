@@ -1,0 +1,76 @@
+name: name: C++ CI Workflow
+
+on: [push, pull_request]
+
+# Test with different operating systems 
+jobs:
+  build:
+    name: '[${{ matrix.os }}@${{ matrix.build_type }}]'
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        build_type: [Debug, Release]
+        os: [ubuntu-latest, macOS-latest]
+        
+        
+    # operating system dependences
+    steps:
+    - uses: actions/checkout@master                                                                
+                                                                                                      
+    - name: Dependencies [macOS]
+      if: matrix.os == 'macOS-latest'
+      run: |
+        brew update
+        brew install ccache
+        export PATH="/usr/local/opt/ccache/libexec:$PATH"
+        brew install eigen pkg-config
+        
+    - name: Dependencies [Ubuntu]
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        export DEBIAN_FRONTEND=noninteractive
+        apt-get install -y clang wget unzip build-essential cmake libeigen3-dev git 
+        
+    - name: Source-based Dependencies 
+      shell: bash
+      run: |                                                                                      
+        wget https://github.com/google/googletest/archive/release-1.8.0.zip
+        unzip release-1.8.0.zip
+        cd googletest-release-1.8.0
+        mkdir build
+        cd build
+        cmake -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/install -DBUILD_GTEST=ON -DBUILD_SHARED_LIBS=ON ..                                 
+        cmake --build . --config ${{ matrix.build_type }} --target install    
+        cd ../..
+                                                                                           
+        git clone --recursive https://github.com/oxfordcontrol/osqp.git
+        cd osqp
+        mkdir build
+        cd build
+        cmake -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/install -DUNITTESTS=OFF ..
+        cmake --build . --config ${{matrix.build_type}} --target install
+        cd ../..
+
+
+    - name: Configure
+      shell: bash
+      run: |
+        mkdir -p build
+        cd build    
+        cmake -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} ..
+        
+    - name: Build
+      shell: bash
+      run: |
+        cd build
+        cmake --build . --config ${{ matrix.build_type }}
+    
+    - name: Test
+      shell: bash
+      run: |
+        cd build
+        cmake -DBUILD_TESTING:BOOL=ON .
+        cmake --build . --config ${{ matrix.build_type }}
+        ctest --output-on-failure -C ${{ matrix.build_type }} .
+
+
