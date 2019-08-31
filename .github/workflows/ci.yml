@@ -26,7 +26,6 @@ jobs:
         brew install eigen pkg-config
         export DYLD_LIBRARY_PATH=${DYLD_LIBRARY_PATH}:${GITHUB_WORKSPACE}/install/lib
         echo ${DYLD_LIBRARY_PATH}
-        ls ${DYLD_LIBRARY_PATH}
         
     - name: Dependencies [Ubuntu]
       if: matrix.os == 'ubuntu-latest'
