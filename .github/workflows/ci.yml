@@ -24,8 +24,6 @@ jobs:
         brew install ccache
         export PATH="/usr/local/opt/ccache/libexec:$PATH"
         brew install eigen pkg-config
-        export DYLD_LIBRARY_PATH=${GITHUB_WORKSPACE}/install/lib
-        echo ${DYLD_LIBRARY_PATH}
         
     - name: Dependencies [Ubuntu]
       if: matrix.os == 'ubuntu-latest'
@@ -53,8 +51,6 @@ jobs:
         cmake --build . --config ${{matrix.build_type}} --target install
         cd ../..
 
-        export PATH=$PATH:${GITHUB_WORKSPACE}/install/bin:${GITHUB_WORKSPACE}/install/lib
-
     - name: Configure
       shell: bash
       run: |
@@ -71,6 +67,8 @@ jobs:
     - name: Test
       shell: bash
       run: |
+        export DYLD_LIBRARY_PATH=${GITHUB_WORKSPACE}/install/lib
+        export PATH=$PATH:${GITHUB_WORKSPACE}/install/bin:${GITHUB_WORKSPACE}/install/lib
         cd build
         cmake -DCMAKE_PREFIX_PATH=${GITHUB_WORKSPACE}/install -DBUILD_TESTING:BOOL=ON .
         cmake --build . --config ${{ matrix.build_type }}
