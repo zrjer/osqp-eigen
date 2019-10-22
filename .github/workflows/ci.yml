@@ -29,7 +29,14 @@ jobs:
     - name: Dependencies [windows]
       if: matrix.os == 'windows-latest'
       run: |
-        vcpkg.exe install --triplet x64-windows gtest eigen3
+        vcpkg.exe install --triplet x64-windows gtest
+        hg clone https://bitbucket.org/eigen/eigen
+        cd eigen
+        md build
+        cd build
+        cmake ..
+        cmake --build . --config Release --target INSTALL
+        SET Eigen3_DIR=C:/Program Files (x86)/Eigen/lib/cmake/eigen3/
 
     - name: Dependencies [Ubuntu]
       if: matrix.os == 'ubuntu-latest'
